@@ -30,10 +30,19 @@ contract Lottery {
         return uint(keccak256(block.difficulty, now, players));
     }
 
-    function pickWinner() public {
-        require(msg.sender == manager);
+    function pickWinner() public restricted {
         uint index = random() % players.length;
         players[index].transfer(this.balance);
         players = new address[](0);
     }
+
+    modifier restricted() {
+          require(msg.sender == manager);
+          //it will take whatever is in the function calling it and use it here _
+          _;
+    }
+
+    function getPlayers() public view returns (address[]) {
+        return players;
+    } 
 }
